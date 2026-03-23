@@ -1,0 +1,24 @@
+spring:
+  datasource:
+    url: jdbc:sqlite:file:memdb1?mode=memory&cache=shared
+    driver-class-name: org.sqlite.JDBC
+    hikari:
+      maximum-pool-size: 5
+      minimum-idle: 1
+      connection-timeout: 30000
+      # Keep connection alive so in-memory DB is not destroyed
+      keepalive-time: 30000
+  jpa:
+    database-platform: org.hibernate.community.dialect.SQLiteDialect
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: false
+
+logging:
+  level:
+    com.consortium.admin: DEBUG
+    org.springframework: WARN
+    org.hibernate.SQL: DEBUG
