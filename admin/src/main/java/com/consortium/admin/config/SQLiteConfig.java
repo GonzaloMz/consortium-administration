@@ -1,6 +1,5 @@
 package com.consortium.admin.config;
 
-import com.zaxxer.hikari.HikariDataSource;
 import jakarta.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
