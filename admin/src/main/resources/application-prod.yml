@@ -1,0 +1,25 @@
+spring:
+  datasource:
+    url: jdbc:sqlite:/var/app/data/app.db?busy_timeout=5000&journal_mode=WAL&synchronous=NORMAL
+    driver-class-name: org.sqlite.JDBC
+    hikari:
+      connection-init-sql: PRAGMA foreign_keys=ON;
+      maximum-pool-size: 5
+      minimum-idle: 1
+      connection-timeout: 30000
+      idle-timeout: 600000
+      max-lifetime: 1800000
+  jpa:
+    database-platform: org.hibernate.community.dialect.SQLiteDialect
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: false
+
+logging:
+  level:
+    com.consortium.admin: INFO
+    org.springframework: WARN
+    org.hibernate: WARN
