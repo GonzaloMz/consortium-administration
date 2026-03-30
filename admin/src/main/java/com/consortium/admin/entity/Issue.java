@@ -3,18 +3,13 @@ package com.consortium.admin.entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 
-import java.time.LocalDate;
 
 /**
  * Represents an issue (incident or maintenance task) associated with a building.
  */
 @Entity
 @Table(name = "issues")
-public class Issue {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class Issue extends AbstractIssue{
 
     @NotNull(message = "Building is required")
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
@@ -27,27 +22,6 @@ public class Issue {
     @Column(nullable = false)
     private boolean commonExpense = false;
 
-    @Column(nullable = false, updatable = false)
-    private LocalDate creationDate;
-
-    @Column
-    private LocalDate updateDate;
-
-    @PrePersist
-    protected void onCreate() {
-        if (creationDate == null) {
-            creationDate = LocalDate.now();
-        }
-        if (updateDate == null) {
-            updateDate = creationDate;
-        }
-    }
-
-    @PreUpdate
-    protected void onUpdate() {
-        updateDate = LocalDate.now();
-    }
-
     public Issue() {
     }
 
@@ -55,14 +29,6 @@ public class Issue {
         this.building = building;
         this.detail = detail;
         this.commonExpense = commonExpense;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public Building getBuilding() {
@@ -89,19 +55,4 @@ public class Issue {
         this.commonExpense = commonExpense;
     }
 
-    public LocalDate getCreationDate() {
-        return creationDate;
-    }
-
-    public void setCreationDate(LocalDate creationDate) {
-        this.creationDate = creationDate;
-    }
-
-    public LocalDate getUpdateDate() {
-        return updateDate;
-    }
-
-    public void setUpdateDate(LocalDate updateDate) {
-        this.updateDate = updateDate;
-    }
 }

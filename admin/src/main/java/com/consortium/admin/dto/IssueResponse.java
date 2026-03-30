@@ -6,7 +6,7 @@ import com.consortium.admin.entity.IssueSpent;
 import com.consortium.admin.entity.IssueUnit;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -16,8 +16,8 @@ public class IssueResponse {
     private Long buildingId;
     private String detail;
     private boolean commonExpense;
-    private LocalDate creationDate;
-    private LocalDate updateDate;
+    private LocalDateTime creationDate;
+    private LocalDateTime updateDate;
     private List<AttachmentItem> attachments;
     private List<UnitItem> units;
     private List<SpentItem> spents;
@@ -60,11 +60,11 @@ public class IssueResponse {
     public boolean isCommonExpense() { return commonExpense; }
     public void setCommonExpense(boolean commonExpense) { this.commonExpense = commonExpense; }
 
-    public LocalDate getCreationDate() { return creationDate; }
-    public void setCreationDate(LocalDate creationDate) { this.creationDate = creationDate; }
+    public LocalDateTime getCreationDate() { return creationDate; }
+    public void setCreationDate(LocalDateTime creationDate) { this.creationDate = creationDate; }
 
-    public LocalDate getUpdateDate() { return updateDate; }
-    public void setUpdateDate(LocalDate updateDate) { this.updateDate = updateDate; }
+    public LocalDateTime getUpdateDate() { return updateDate; }
+    public void setUpdateDate(LocalDateTime updateDate) { this.updateDate = updateDate; }
 
     public List<AttachmentItem> getAttachments() { return attachments; }
     public void setAttachments(List<AttachmentItem> attachments) { this.attachments = attachments; }

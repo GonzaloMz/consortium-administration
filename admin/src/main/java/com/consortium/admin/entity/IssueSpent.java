@@ -5,18 +5,13 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
 
 /**
  * Represents an expense (spent) associated with an issue.
  */
 @Entity
 @Table(name = "issue_spents")
-public class IssueSpent {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class IssueSpent extends AbstractIssue {
 
     @NotNull(message = "Value is required")
     @Column(nullable = false, precision = 19, scale = 4)
@@ -31,27 +26,6 @@ public class IssueSpent {
     @JoinColumn(name = "issue_id", nullable = false)
     private Issue issue;
 
-    @Column(nullable = false, updatable = false)
-    private LocalDate creationDate;
-
-    @Column
-    private LocalDate updateDate;
-
-    @PrePersist
-    protected void onCreate() {
-        if (creationDate == null) {
-            creationDate = LocalDate.now();
-        }
-        if (updateDate == null) {
-            updateDate = creationDate;
-        }
-    }
-
-    @PreUpdate
-    protected void onUpdate() {
-        updateDate = LocalDate.now();
-    }
-
     public IssueSpent() {
     }
 
@@ -59,14 +33,6 @@ public class IssueSpent {
         this.value = value;
         this.provider = provider;
         this.issue = issue;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public BigDecimal getValue() {
@@ -93,19 +59,4 @@ public class IssueSpent {
         this.issue = issue;
     }
 
-    public LocalDate getCreationDate() {
-        return creationDate;
-    }
-
-    public void setCreationDate(LocalDate creationDate) {
-        this.creationDate = creationDate;
-    }
-
-    public LocalDate getUpdateDate() {
-        return updateDate;
-    }
-
-    public void setUpdateDate(LocalDate updateDate) {
-        this.updateDate = updateDate;
-    }
 }
