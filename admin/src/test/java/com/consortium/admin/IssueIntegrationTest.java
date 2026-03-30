@@ -4,7 +4,6 @@ import com.consortium.admin.dto.BuildingRequest;
 import com.consortium.admin.dto.BuildingResponse;
 import com.consortium.admin.dto.BuildingUnitRequest;
 import com.consortium.admin.dto.BuildingUnitResponse;
-import com.consortium.admin.dto.IssueAttachmentRequest;
 import com.consortium.admin.dto.IssueRequest;
 import com.consortium.admin.dto.IssueResponse;
 import com.consortium.admin.dto.IssueSpentRequest;
@@ -18,17 +17,22 @@ import com.consortium.admin.repository.IssueRepository;
 import com.consortium.admin.repository.IssueSpentRepository;
 import com.consortium.admin.repository.IssueUnitRepository;
 import com.consortium.admin.repository.PersonRepository;
+import com.consortium.admin.service.StorageService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 
 import java.math.BigDecimal;
 
@@ -45,6 +49,9 @@ class IssueIntegrationTest {
 
     @Autowired
     private ObjectMapper objectMapper;
+
+    @MockBean
+    private StorageService storageService;
 
     @Autowired
     private IssueRepository issueRepository;
@@ -169,6 +176,8 @@ class IssueIntegrationTest {
 
     @Test
     void attachFileToIssue() throws Exception {
+        when(storageService.upload(any())).thenReturn("issues/mock-uuid/photo.jpg");
+
         IssueRequest request = new IssueRequest(buildingId, "Attachment test", false);
 
         MvcResult result = mockMvc.perform(post("/api/issues")
@@ -180,14 +189,14 @@ class IssueIntegrationTest {
         IssueResponse created = objectMapper.readValue(
                 result.getResponse().getContentAsString(), IssueResponse.class);
 
-        IssueAttachmentRequest attachRequest = new IssueAttachmentRequest("files/photo.jpg");
+        MockMultipartFile multipartFile = new MockMultipartFile(
+                "file", "photo.jpg", MediaType.IMAGE_JPEG_VALUE, "fake-image-content".getBytes());
 
-        mockMvc.perform(post("/api/issues/" + created.getId() + "/attachments")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(attachRequest)))
+        mockMvc.perform(multipart("/api/issues/" + created.getId() + "/attachments")
+                        .file(multipartFile))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.attachments.length()").value(1))
-                .andExpect(jsonPath("$.attachments[0].attachment").value("files/photo.jpg"));
+                .andExpect(jsonPath("$.attachments[0].attachment").value("issues/mock-uuid/photo.jpg"));
     }
 
     @Test

@@ -18,6 +18,13 @@ spring:
       hibernate:
         format_sql: false
 
+# Cloudflare R2 storage credentials must be provided as command-line arguments when starting the application:
+#   java -jar app.jar --spring.profiles.active=prod \
+#     --cloudflare.r2.account-id=<ACCOUNT_ID> \
+#     --cloudflare.r2.access-key=<ACCESS_KEY> \
+#     --cloudflare.r2.secret-key=<SECRET_KEY> \
+#     --cloudflare.r2.bucket=<BUCKET_NAME>
+
 logging:
   level:
     com.consortium.admin: INFO
