@@ -1,6 +1,5 @@
 package com.consortium.admin.service;
 
-import com.consortium.admin.dto.IssueAttachmentRequest;
 import com.consortium.admin.dto.IssueRequest;
 import com.consortium.admin.dto.IssueResponse;
 import com.consortium.admin.dto.IssueSpentRequest;
@@ -24,7 +23,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 @Service
@@ -38,19 +39,22 @@ public class IssueService {
     private final IssueUnitRepository issueUnitRepository;
     private final IssueAttachmentRepository issueAttachmentRepository;
     private final IssueSpentRepository issueSpentRepository;
+    private final StorageService storageService;
 
     public IssueService(IssueRepository issueRepository,
                         BuildingRepository buildingRepository,
                         BuildingUnitRepository buildingUnitRepository,
                         IssueUnitRepository issueUnitRepository,
                         IssueAttachmentRepository issueAttachmentRepository,
-                        IssueSpentRepository issueSpentRepository) {
+                        IssueSpentRepository issueSpentRepository,
+                        StorageService storageService) {
         this.issueRepository = issueRepository;
         this.buildingRepository = buildingRepository;
         this.buildingUnitRepository = buildingUnitRepository;
         this.issueUnitRepository = issueUnitRepository;
         this.issueAttachmentRepository = issueAttachmentRepository;
         this.issueSpentRepository = issueSpentRepository;
+        this.storageService = storageService;
     }
 
     @Transactional(readOnly = true)
@@ -98,11 +102,12 @@ public class IssueService {
     }
 
     @Transactional
-    public IssueResponse attachFile(Long id, IssueAttachmentRequest request) {
+    public IssueResponse attachFile(Long id, MultipartFile file) throws IOException {
         log.debug("Attaching file to issue id={}", id);
         Issue issue = issueRepository.findById(id)
                 .orElseThrow(() -> new IssueNotFoundException(id));
-        IssueAttachment attachment = new IssueAttachment(request.getAttachment(), issue);
+        String storagePath = storageService.upload(file);
+        IssueAttachment attachment = new IssueAttachment(storagePath, issue);
         RetryUtil.executeWithRetry(() -> issueAttachmentRepository.save(attachment));
         log.info("Attached file to issue id={}", id);
         return toResponse(issue);

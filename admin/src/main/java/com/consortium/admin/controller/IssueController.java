@@ -1,6 +1,5 @@
 package com.consortium.admin.controller;
 
-import com.consortium.admin.dto.IssueAttachmentRequest;
 import com.consortium.admin.dto.IssueRequest;
 import com.consortium.admin.dto.IssueResponse;
 import com.consortium.admin.dto.IssueSpentRequest;
@@ -10,9 +9,12 @@ import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -54,12 +56,12 @@ public class IssueController {
         return ResponseEntity.ok(issueService.update(id, request));
     }
 
-    @PostMapping("/{id}/attachments")
+    @PostMapping(value = "/{id}/attachments", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<IssueResponse> attachFile(
             @PathVariable Long id,
-            @Valid @RequestBody IssueAttachmentRequest request) {
+            @RequestPart("file") MultipartFile file) throws IOException {
         log.debug("POST /api/issues/{}/attachments", id);
-        return ResponseEntity.ok(issueService.attachFile(id, request));
+        return ResponseEntity.ok(issueService.attachFile(id, file));
     }
 
     @PostMapping("/{id}/units")
