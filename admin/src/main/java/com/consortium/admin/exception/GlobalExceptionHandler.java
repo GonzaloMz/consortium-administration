@@ -24,6 +24,24 @@ public class GlobalExceptionHandler {
         return buildError(HttpStatus.NOT_FOUND, ex.getMessage());
     }
 
+    @ExceptionHandler(BuildingNotFoundException.class)
+    public ResponseEntity<Map<String, Object>> handleBuildingNotFound(BuildingNotFoundException ex) {
+        log.warn("Building not found: {}", ex.getMessage());
+        return buildError(HttpStatus.NOT_FOUND, ex.getMessage());
+    }
+
+    @ExceptionHandler(BuildingUnitNotFoundException.class)
+    public ResponseEntity<Map<String, Object>> handleBuildingUnitNotFound(BuildingUnitNotFoundException ex) {
+        log.warn("Building unit not found: {}", ex.getMessage());
+        return buildError(HttpStatus.NOT_FOUND, ex.getMessage());
+    }
+
+    @ExceptionHandler(IssueNotFoundException.class)
+    public ResponseEntity<Map<String, Object>> handleIssueNotFound(IssueNotFoundException ex) {
+        log.warn("Issue not found: {}", ex.getMessage());
+        return buildError(HttpStatus.NOT_FOUND, ex.getMessage());
+    }
+
     @ExceptionHandler(DuplicateEmailException.class)
     public ResponseEntity<Map<String, Object>> handleDuplicateEmail(DuplicateEmailException ex) {
         log.warn("Duplicate email: {}", ex.getMessage());
