@@ -28,6 +28,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.math.BigDecimal;
 
@@ -156,7 +157,14 @@ class IssueIntegrationTest {
                         .content(objectMapper.writeValueAsString(update)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.detail").value("Updated detail"))
-                .andExpect(jsonPath("$.commonExpense").value(true));
+                .andExpect(jsonPath("$.commonExpense").value(true))
+                // verify that updateDate is updated
+                .andExpect(jsonPath("$.updateDate").isNotEmpty())
+                .andExpect(response -> {
+                        String creationDate = objectMapper.readTree(response.getResponse().getContentAsString()).get("creationDate").asText();
+                        String updateDate = objectMapper.readTree(response.getResponse().getContentAsString()).get("updateDate").asText();
+                        assertTrue(updateDate.compareTo(creationDate) > 0, "updateDate should be after creationDate");
+                });
     }
 
     @Test
